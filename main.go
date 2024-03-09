@@ -1,5 +1,7 @@
 package main
 
-func main() {
+import "assigntment2/database"
 
+func main() {
+	database.DatabaseConnect()
 }
