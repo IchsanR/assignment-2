@@ -47,7 +47,6 @@ func (oc *OrderController) CreateOrder(c *gin.Context) {
 		return
 	}
 
-	// Construct the response JSON with the order and its ID
 	response := gin.H{
 		"id":           orderID,
 		"orderedAt":    order.OrderedAt,
@@ -56,4 +55,14 @@ func (oc *OrderController) CreateOrder(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, response)
+}
+
+func (oc *OrderController) GetAllOrders(c *gin.Context) {
+	orders, err := oc.repo.GetAllOrders()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch orders", "details": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, orders)
 }
