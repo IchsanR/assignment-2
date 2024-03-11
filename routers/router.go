@@ -15,6 +15,7 @@ func StartServer(db *sql.DB) *gin.Engine {
 	orderController := controllers.NewOrderController(orderRepo)
 
 	router.POST("/orders", orderController.CreateOrder)
+	router.GET("/orders", orderController.GetAllOrders)
 
 	return router
 }
