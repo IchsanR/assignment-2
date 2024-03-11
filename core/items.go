@@ -14,6 +14,13 @@ type Order struct {
 	Items        []Item    `json:"items"`
 }
 
+type OrderResponse struct {
+	ID           int64     `json:"id"`
+	OrderedAt    time.Time `json:"orderedAt"`
+	CustomerName string    `json:"customerName"`
+	Items        []Item    `json:"items"`
+}
+
 type Products interface {
-	InsertOrder(order Order) error
+	Orders(order Order) error
 }
