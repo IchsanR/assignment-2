@@ -1,9 +1,20 @@
 package routers
 
-import "github.com/gin-gonic/gin"
+import (
+	"assigntment2/controllers"
+	"assigntment2/repository"
+	"database/sql"
 
-func StartServer() *gin.Engine {
+	"github.com/gin-gonic/gin"
+)
+
+func StartServer(db *sql.DB) *gin.Engine {
 	router := gin.Default()
+
+	orderRepo := repository.NewRepo(db)
+	orderController := controllers.NewOrderController(orderRepo)
+
+	router.POST("/orders", orderController.CreateOrder)
 
 	return router
 }

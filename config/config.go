@@ -10,7 +10,7 @@ type EnvConfig struct {
 	DbPort     int    `env:"DB_PORT" env-default:"5432"`
 	DbUser     string `env:"DB_USERNAME" env-default:"postgres"`
 	DbPassword string `env:"DB_PASSWORD" env-default:"root"`
-	DbName     string `env:"DB_NAME" env-defauld:"assignment2"`
+	DbName     string `env:"DB_NAME" env-default:"assignment2"`
 }
 
 func LoadEnv() EnvConfig {

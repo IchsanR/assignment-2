@@ -8,7 +8,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func DatabaseConnect() {
+func DatabaseConnect() (*sql.DB, error) {
 	cfg := config.LoadEnv()
 
 	dbName := cfg.DbName
@@ -21,14 +21,14 @@ func DatabaseConnect() {
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	fmt.Println("Database Connected")
+	return db, nil
 }
