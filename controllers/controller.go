@@ -3,7 +3,9 @@ package controllers
 import (
 	"assigntment2/core"
 	"assigntment2/repository"
+	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -65,4 +67,20 @@ func (oc *OrderController) GetAllOrders(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, orders)
+}
+
+func (oc *OrderController) DeleteOrder(c *gin.Context) {
+	orderID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid order ID"})
+		return
+	}
+
+	err = oc.repo.DeleteOrder(orderID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete order", "details": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Order with ID %d deleted successfully", orderID)})
 }
