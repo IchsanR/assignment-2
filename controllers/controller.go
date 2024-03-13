@@ -84,3 +84,32 @@ func (oc *OrderController) DeleteOrder(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Order with ID %d deleted successfully", orderID)})
 }
+
+func (oc *OrderController) UpdateOrder(c *gin.Context) {
+	orderID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid order ID"})
+		return
+	}
+
+	var updatedOrder core.OrderResponse
+
+	if updatedOrder.OrderedAt.IsZero() {
+		updatedOrder.OrderedAt = time.Now()
+	}
+
+	if err := c.ShouldBindJSON(&updatedOrder); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	err = oc.repo.UpdateOrder(orderID, updatedOrder)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update order", "details": err.Error()})
+		return
+	}
+
+	updatedOrder.ID = orderID
+
+	c.JSON(http.StatusOK, updatedOrder)
+}
