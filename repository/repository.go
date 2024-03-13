@@ -113,3 +113,37 @@ func (r *Repository) DeleteOrder(orderID int64) error {
 
 	return nil
 }
+
+func (r *Repository) UpdateOrder(orderID int64, order core.OrderResponse) error {
+	tx, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	_, err = tx.Exec("UPDATE orders SET ordered_at = $1, customer_name = $2 WHERE id = $3",
+		order.OrderedAt, order.CustomerName, orderID)
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec("DELETE FROM items WHERE order_id = $1", orderID)
+	if err != nil {
+		return err
+	}
+
+	for _, item := range order.Items {
+		_, err = tx.Exec("INSERT INTO items (order_id, code, description, quantity) VALUES ($1, $2, $3, $4)",
+			orderID, item.ItemCode, item.Description, item.Quantity)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
