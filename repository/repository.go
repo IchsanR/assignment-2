@@ -88,3 +88,28 @@ func (r *Repository) GetAllOrders() ([]core.OrderResponse, error) {
 
 	return result, nil
 }
+
+func (r *Repository) DeleteOrder(orderID int64) error {
+	tx, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	_, err = tx.Exec("DELETE FROM items WHERE order_id = $1", orderID)
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec("DELETE FROM orders WHERE id = $1", orderID)
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
